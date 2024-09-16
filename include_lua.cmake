@@ -1,0 +1,38 @@
+include_directories("Third Party/lua-5.4.6/src")
+
+set(LUA_LIB_SRCS
+    "Third Party/lua-5.4.6/src/lapi.c"
+    "Third Party/lua-5.4.6/src/lauxlib.c"
+    "Third Party/lua-5.4.6/src/lbaselib.c"
+    "Third Party/lua-5.4.6/src/lcode.c"
+    "Third Party/lua-5.4.6/src/lcorolib.c"
+    "Third Party/lua-5.4.6/src/lctype.c"
+    "Third Party/lua-5.4.6/src/ldblib.c"
+    "Third Party/lua-5.4.6/src/ldebug.c"
+    "Third Party/lua-5.4.6/src/ldo.c"
+    "Third Party/lua-5.4.6/src/ldump.c"
+    "Third Party/lua-5.4.6/src/lfunc.c"
+    "Third Party/lua-5.4.6/src/lgc.c"
+    "Third Party/lua-5.4.6/src/linit.c"
+    "Third Party/lua-5.4.6/src/liolib.c"
+    "Third Party/lua-5.4.6/src/llex.c"
+    "Third Party/lua-5.4.6/src/lmathlib.c"
+    "Third Party/lua-5.4.6/src/lmem.c"
+    "Third Party/lua-5.4.6/src/loadlib.c"
+    "Third Party/lua-5.4.6/src/lobject.c"
+    "Third Party/lua-5.4.6/src/lopcodes.c"
+    "Third Party/lua-5.4.6/src/loslib.c"
+    "Third Party/lua-5.4.6/src/lparser.c"
+    "Third Party/lua-5.4.6/src/lstate.c"
+    "Third Party/lua-5.4.6/src/lstring.c"
+    "Third Party/lua-5.4.6/src/lstrlib.c"
+    "Third Party/lua-5.4.6/src/ltable.c"
+    "Third Party/lua-5.4.6/src/ltablib.c"
+    "Third Party/lua-5.4.6/src/ltm.c"
+    "Third Party/lua-5.4.6/src/lundump.c"
+    "Third Party/lua-5.4.6/src/lutf8lib.c"
+    "Third Party/lua-5.4.6/src/lvm.c"
+    "Third Party/lua-5.4.6/src/lzio.c"
+)
+
+add_library(lua STATIC ${LUA_LIB_SRCS})
