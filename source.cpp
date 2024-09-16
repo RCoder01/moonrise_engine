@@ -69,19 +69,11 @@ int main(int argc, char** argv) {
 
 	World world = { game_config, lua_state };
 
-	//using std::chrono::high_resolution_clock;
-	//using std::chrono::duration;
-	//using std::chrono::milliseconds;
-
-	//auto t1 = high_resolution_clock::now();
 	#ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop_arg((em_arg_callback_func)mainloop, &world, -1, 1);
 	#else
 	while (!world.run_turn()) {}
 	#endif
-	//auto t2 = high_resolution_clock::now();
-	//duration<double, std::milli> ms = t2 - t1;
-	//std::cout << '\n' << ms.count() / 1000 << std::endl;
 
 	SDL_Quit();
 }
@@ -291,7 +283,6 @@ static rapidjson::Document ReadJsonFile(const std::string &path)
 	std::fclose(file_pointer);
 
 	if (out_document.HasParseError()) {
-		//rapidjson::ParseErrorCode errorCode = out_document.GetParseError();
 		std::cout << "error parsing json at [" << path << "]" << std::endl;
 		exit(0);
 	}
@@ -1099,9 +1090,6 @@ bool World::process_events() {
 World::World(std::shared_ptr<GameConfig> game_config, std::shared_ptr<Renderer> renderer, lua_State* lua_state)
 	: config(game_config),
 	renderer(renderer),
-	// inputs(std::make_unique<InputManager>()),
-	// render_queues(std::make_unique<RenderQueues>()), 
-	// audio_manager(std::make_shared<AudioManager>()),
 	templates(renderer, lua_state),
 	actors(templates),
 	lua_state(lua_state) {}

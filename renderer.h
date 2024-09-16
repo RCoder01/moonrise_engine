@@ -1,6 +1,4 @@
 #pragma once
-// #define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING 1
-// #define SDL_MAIN_HANDLED
 #include <iostream>
 #include <cassert>
 #include <cerrno>
@@ -14,7 +12,6 @@
 #include "sdl2webgpu.h"
 #include "SDL.h"
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-// #define GLM_FORCE_LEFT_HANDED
 #include "glm/glm.hpp"
 #include "glm/gtx/euler_angles.hpp"
 #include "glm/gtx/quaternion.hpp"
@@ -63,13 +60,10 @@ using WGPUBufferHolder = std::unique_ptr<WGPUBufferImpl, decltype(&bufferDeleter
 
 void textureDeleter(WGPUTexture texture) {
     std::cout << "Attempting to free texture: " << texture << std::endl;
-    // size_t* arc_inner = *(reinterpret_cast<size_t**>(texture) + 3);
 
-    // std::cout << "Texture strong: " << arc_inner[0] << "; weak: " << arc_inner[1] << "; has_surface_presented: " << +*(char*)(arc_inner+2) << std::endl;
     wgpuTextureDestroy(texture);
     std::cout << "Destroyed texture: " << texture << std::endl;
 
-    // std::cout << "Texture strong: " << arc_inner[0] << "; weak: " << arc_inner[1] << "; has_surface_presented: " << +*(char*)(arc_inner+2) << std::endl;
     wgpuTextureRelease(texture);
     std::cout << "Released texture: " << texture << std::endl;
 }
@@ -256,11 +250,7 @@ WGPUAdapterHolder getAdapter(WGPUInstance instance, WGPUSurface surface) {
         .nextInChain = nullptr,
         .compatibleSurface = surface,
         .powerPreference = WGPUPowerPreference_Undefined,
-        // .backendType = WGPUBackendType_Null or WGPUBackendType_Undefined, depending on the backend
         .forceFallbackAdapter = false,
-        // #ifndef WEBGPU_BACKEND_WGPU
-        // .compatibilityMode = false,
-        // #endif
     };
     WGPUAdapter adapter = requestAdapter(instance, &adapterOpts);
     if (!adapter) {
@@ -300,48 +290,10 @@ WGPUDeviceHolder getDevice(WGPUAdapter adapter, const WGPULimits& adapterLimits)
             .maxVertexBufferArrayStride = TRANSFORM_SIZE,
             .maxInterStageShaderComponents = 5,
         }
-        // .limits = {
-        //     .maxTextureDimension1D = adapterLimits.maxTextureDimension1D,
-        //     .maxTextureDimension2D = adapterLimits.maxTextureDimension2D,
-        //     // .maxTextureDimension3D = adapterLimits.maxTextureDimension3D,
-        //     // .maxTextureArrayLayers = adapterLimits.maxTextureArrayLayers,
-        //     .maxBindGroups = adapterLimits.maxBindGroups,
-        //     // .maxBindGroupsPlusVertexBuffers = adapterLimits.maxBindGroupsPlusVertexBuffers,
-        //     // .maxBindingsPerBindGroup = adapterLimits.maxBindingsPerBindGroup,
-        //     // .maxDynamicUniformBuffersPerPipelineLayout = adapterLimits.maxDynamicUniformBuffersPerPipelineLayout,
-        //     // .maxDynamicStorageBuffersPerPipelineLayout = adapterLimits.maxDynamicStorageBuffersPerPipelineLayout,
-        //     // .maxSampledTexturesPerShaderStage = adapterLimits.maxSampledTexturesPerShaderStage,
-        //     // .maxSamplersPerShaderStage = adapterLimits.maxSamplersPerShaderStage,
-        //     // .maxStorageBuffersPerShaderStage = adapterLimits.maxStorageBuffersPerShaderStage,
-        //     .maxStorageTexturesPerShaderStage = adapterLimits.maxStorageTexturesPerShaderStage,
-        //     .maxUniformBuffersPerShaderStage = adapterLimits.maxUniformBuffersPerShaderStage,
-        //     .maxUniformBufferBindingSize = adapterLimits.maxUniformBufferBindingSize,
-        //     // .maxStorageBufferBindingSize = adapterLimits.maxStorageBufferBindingSize,
-        //     .minUniformBufferOffsetAlignment = adapterLimits.minUniformBufferOffsetAlignment,
-        //     .minStorageBufferOffsetAlignment = adapterLimits.minStorageBufferOffsetAlignment,
-        //     .maxVertexBuffers = adapterLimits.maxVertexBuffers,
-        //     .maxBufferSize = adapterLimits.maxBufferSize,
-        //     .maxVertexAttributes = adapterLimits.maxVertexAttributes,
-        //     .maxVertexBufferArrayStride = adapterLimits.maxVertexBufferArrayStride,
-        //     .maxInterStageShaderComponents = adapterLimits.maxInterStageShaderComponents,
-        //     // .maxInterStageShaderVariables = adapterLimits.maxInterStageShaderVariables,
-        //     // .maxColorAttachments = adapterLimits.maxColorAttachments,
-        //     // .maxColorAttachmentBytesPerSample = adapterLimits.maxColorAttachmentBytesPerSample,
-        //     // .maxComputeWorkgroupStorageSize = adapterLimits.maxComputeWorkgroupStorageSize,
-        //     // .maxComputeInvocationsPerWorkgroup = adapterLimits.maxComputeInvocationsPerWorkgroup,
-        //     // .maxComputeWorkgroupSizeX = adapterLimits.maxComputeWorkgroupSizeX,
-        //     // .maxComputeWorkgroupSizeY = adapterLimits.maxComputeWorkgroupSizeY,
-        //     // .maxComputeWorkgroupSizeZ = adapterLimits.maxComputeWorkgroupSizeZ,
-        //     // .maxComputeWorkgroupsPerDimension = adapterLimits.maxComputeWorkgroupsPerDimension,
-        // },
     };
     WGPUDeviceDescriptor deviceDesc = {
         .nextInChain = nullptr,
         .label = "My Device",
-        // #ifdef WEBGPU_BACKEND_DAWN
-        // .requiredFeatureCount = 0,
-        // .requiredFeatures = nullptr,
-        // #endif
         .requiredLimits = &requiredLimits,
         .defaultQueue = {
             .nextInChain = nullptr,
@@ -830,21 +782,15 @@ public:
 
 struct Transform {
     glm::vec3 translation;
-    // glm::quat rotation;
     glm::vec3 rotation;
     glm::vec3 scale;
 
     glm::mat4x4 toMatrix() const {
         glm::mat4x4 model_scale = glm::scale(glm::mat4x4(1.f), scale);
         glm::mat4x4 model_translation = glm::translate(glm::mat4x4(1.f), translation);
-        // glm::mat4x4 model_rotation = glm::toMat4(rotation);
         glm::mat4x4 model_rotation = glm::yawPitchRoll(-rotation.x, rotation.z, rotation.y);
         return model_translation * model_rotation * model_scale;
     }
-
-    // Transform() : translation(0.f), rotation(1.f, 0.f, 0.f, 0.f), scale(1.f) {}
-
-    // Transform(glm::vec3 translation, glm::quat rotation, glm::vec3 scale) : translation(translation), rotation(rotation), scale(scale) {}
 
     Transform() : translation(0.f), rotation(0.f, 0.f, 0.f), scale(1.f) {}
 
@@ -975,7 +921,6 @@ public:
 
     WGPUBuffer getBuffer(std::vector<glm::mat4x4>& ancilla) {
         if (!changed) {
-            // std::cout << "Returning unchanged buffer" << std::endl;
             return buffer.get();
         }
         if (descriptor.size < data.size() * sizeof(glm::mat4x4)) {
@@ -989,7 +934,6 @@ public:
                 ancilla.push_back(data.rawget(i).toMatrix());
             }
         }
-        // std::cout << "Writing " << ancilla.size() << " transforms to buffer \"" << descriptor.label << '"' << std::endl;
         wgpuQueueWriteBuffer(
             queue,
             buffer.get(),
@@ -1053,7 +997,6 @@ class Renderer {
     WGPUDeviceHolder device = {nullptr, voidDeleter};
     WGPULimits device_limits;
     WGPUQueueHolder queue = {nullptr, voidDeleter};
-    // WGPUTextureFormat swap_chain_format;
     WGPUShaderModuleHolder shader_module = {nullptr, voidDeleter};
     WGPUBindGroupLayoutHolder bind_group_layout = {nullptr, voidDeleter};
     WGPUPipelineLayoutHolder pipeline_layout = {nullptr, voidDeleter};
@@ -1080,7 +1023,6 @@ class Renderer {
         #else
         WGPUSurfaceTexture surface_texture;
         wgpuSurfaceGetCurrentTexture(surface.get(), &surface_texture);
-        // _current_texture = WGPUTextureHolder(surface_texture.texture, textureDeleter); // destroying current texture panics
         _current_texture = WGPUTextureHolder(surface_texture.texture, wgpuTextureRelease);
 
         WGPUTextureViewDescriptor current_texture_view_descriptor = {
@@ -1110,7 +1052,6 @@ class Renderer {
     void renderFrame(WGPUTextureView current_texture) {
         glm::mat4x4 camera_transform_matrix = glm::inverse(camera_transform.toMatrix());
         wgpuQueueWriteBuffer(queue.get(), uniform_buffer.get(), offsetof(Uniforms, view), &camera_transform_matrix, TRANSFORM_SIZE);
-        // std::cout << "Written camera transform to buffer" << std::endl;
 
         WGPUCommandEncoderDescriptor encoderDesc = {
             .nextInChain = nullptr,
@@ -1147,7 +1088,6 @@ class Renderer {
             #if defined(WEBGPU_BACKEND_DAWN) or defined(__EMSCRIPTEN__)
             .stencilLoadOp = WGPULoadOp_Undefined,
             .stencilStoreOp = WGPUStoreOp_Undefined,
-            // .clearDepth = std::numeric_limits<float>::quiet_NaN(),
             #else
             .stencilLoadOp = WGPULoadOp_Clear,
             .stencilStoreOp = WGPUStoreOp_Store,
@@ -1172,7 +1112,6 @@ class Renderer {
             renderModelType(render_pass.get(), model_data);
         }
         wgpuRenderPassEncoderEnd(render_pass.get());
-        // std::cout << "Rendered " << models.size() << " model(s)" << std::endl;
 
         WGPUCommandBufferDescriptor cmdBufferDescriptor = {};
         cmdBufferDescriptor.nextInChain = nullptr;
@@ -1181,7 +1120,6 @@ class Renderer {
         WGPUCommandBuffer commandPtr = command.get();
 
         wgpuQueueSubmit(queue.get(), 1, &commandPtr);
-        // std::cout << "Submitted command buffer" << std::endl;
     }
 
     void renderModelType(WGPURenderPassEncoder render_pass, ModelType& model_data) {
@@ -1200,25 +1138,12 @@ class Renderer {
             wgpuRenderPassEncoderSetBindGroup(render_pass, 2, primitive.bind_group.get(), 0, 0);
             wgpuRenderPassEncoderDrawIndexed(render_pass, static_cast<uint32_t>(wgpuBufferGetSize(primitive.index_buffer.get()) / sizeof(uint16_t)), static_cast<uint32_t>(model_data.transforms.count()), 0, 0, 0);
         }
-        // std::cout << "Rendered " << model_data.transforms.count() << " instance(s) of model" << std::endl;
     }
 
     void presentFrame() {
         #if not defined(__EMSCRIPTEN__)
-
-        // std::cout << "Presenting frame" << std::endl;
-
-        // size_t* arc_inner = *(reinterpret_cast<size_t**>(surface.get()) + 2);
-        // std::cout << "Surface strong: " << arc_inner[0] << "; weak: " << arc_inner[1] << "; has_surface_presented: " << +*(char*)(arc_inner+2) << std::endl;
-
         wgpuSurfacePresent(surface.get());
-
-        // std::cout << "Surface strong: " << arc_inner[0] << "; weak: " << arc_inner[1] << "; has_surface_presented: " << +*(char*)(arc_inner+2) << std::endl;
-
-        // std::cout << "Current texture is " << _current_texture.get() << std::endl;
-
         delete_ptr(_current_texture);
-        // std::cout << "Frame finished" << std::endl;
         #endif
     }
 
@@ -1387,7 +1312,6 @@ class Renderer {
     Uniforms make_uniforms() {
         glm::vec3 camera_origin = {-2.f, 1.f, .5f};
         glm::mat4x4 view_translation = glm::translate(glm::mat4x4(1.0), -camera_origin);
-        // float angle2 = 3.f * static_cast<float>(M_PI) / 4.f;
         float angle2 = -20.f * static_cast<float>(M_PI) / 180.f;
         glm::mat4x4 view_rotation = glm::rotate(glm::mat4x4(1.0), -angle2, glm::vec3(0.0, 0.0, 1.0));
 
@@ -1398,9 +1322,9 @@ class Renderer {
         float far_ = 500.f;
         float fov = 45.f * static_cast<float>(M_PI) / 180.f;
         glm::mat4x4 projection_matrix = glm::perspective(fov, ratio, near_, far_);
-        // std::cout << "Projection matrix: " << glm::to_string(projection_matrix) << std::endl;
+        std::cout << "Projection matrix: " << glm::to_string(projection_matrix) << std::endl;
         std::cout << "View matrix: " << glm::to_string(view_matrix) << std::endl;
-        // std::cout << "Model matrix: " << glm::to_string(model_matrix) << std::endl;
+        std::cout << "Model matrix: " << glm::to_string(model_matrix) << std::endl;
 
         return {
             .projection = projection_matrix,
@@ -1444,7 +1368,6 @@ public:
         wgpuAdapterGetLimits(adapter.get(), &supported_limits);
         #endif
         adapter_limits = supported_limits.limits;
-        // std::cout << adapterLimits.maxBufferSize << std::endl;
         device = getDevice(adapter.get(), adapter_limits);
 
         surface_preferred_format = wgpuSurfaceGetPreferredFormat(surface.get(), adapter.get());
@@ -1512,7 +1435,7 @@ public:
         default_texture = makeTexture("Default image", {16, 16, 1}, default_image.data());
         default_texture_view = makeTextureView(default_texture.get());
         default_sampler = makeSampler("Default sampler");
-        // std::cout << "Renderer initialized" << std::endl;
+        std::cout << "Renderer initialized" << std::endl;
     }
 
     void resize() {
@@ -1710,13 +1633,11 @@ public:
             WGPUTextureHolder color = {default_texture.get(), voidDeleter}; // use voidDeleter to not delete the default texture
             WGPUTextureViewHolder color_view = {default_texture_view.get(), voidDeleter};
             WGPUSamplerHolder color_sampler = {default_sampler.get(), voidDeleter};
-            // WGPUTextureHolder normal = {default_texture.get(), voidDeleter}; // dont delete the default texture
             if (primitive.material != -1) {
                 tinygltf::Material& material = model.materials[primitive.material];
                 const auto& base_color_factor = material.pbrMetallicRoughness.baseColorFactor;
                 base_color = {base_color_factor[0], base_color_factor[1], base_color_factor[2], base_color_factor[3]};
                 tinygltf::TextureInfo colorInfo = material.pbrMetallicRoughness.baseColorTexture;
-                // tinygltf::NormalTextureInfo normalInfo = material.normalTexture;
                 bool has_texture = colorInfo.index != -1;
                 bool has_texcoords = primitive.attributes.find("TEXCOORD_0") != primitive.attributes.end();
                 if (has_texture != has_texcoords) {
@@ -1800,7 +1721,6 @@ public:
 
     void renderPresentFrame() {
         WGPUTextureViewHolder texture_view = getCurrentTexture();
-        // std::cout << "Recieved current texture: " << texture_view.get() << std::endl;
         renderFrame(texture_view.get());
         presentFrame();
     }
@@ -1826,60 +1746,3 @@ public:
         model_data.transforms.remove(instance.transform_index);
     }
 };
-
-// struct GameData {
-//     Renderer renderer;
-//     std::vector<Renderer::InstanceHandle> instances;
-//     bool running = true;
-// };
-
-// void mainloop_iteration(void* gamedata) {
-//     GameData* data = static_cast<GameData*>(gamedata);
-//     SDL_Event event;
-//     while (SDL_PollEvent(&event)) {
-//         if (event.type == SDL_QUIT) {
-//             data->running = false;
-//         }
-//         else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
-//             data->renderer.resize();
-//         }
-//     }
-//     for (auto& instance : data->instances) {
-//         Transform& transform = data->renderer.getModelInstance(instance);
-//         transform.rotation.y += .01f;
-//     }
-//     data->renderer.renderPresentFrame();
-// }
-
-// int main(int argc, char** argv) {
-//     std::string filename;
-//     if (argc <= 1) {
-//         filename = "stylized_pine_tree_tree.gltf";
-//     } else {
-//         filename = argv[1];
-//     }
-//     GameData gamedata;
-//     auto model = gamedata.renderer.loadModel(filename);
-//     for (int i = -10; i < 10; i++) {
-//         for (int j = 0; j < 10; j++) {
-//             gamedata.instances.push_back(gamedata.renderer.spawnInstance(model, Transform{
-//                 glm::vec3(static_cast<float>(i), 0.f, static_cast<float>(j)),
-//                 glm::vec3(0.f, 0.f, 0.f),
-//                 glm::vec3(.003f)}));
-//                 // glm::vec3(300.f)}));
-//         }
-//     }
-//     Transform& cameraTransform = gamedata.renderer.getCameraTransform();
-//     cameraTransform.translation = glm::vec3(-2.f, 2.f, .5f);
-//     gamedata.renderer.getCameraTransform().rotation = glm::vec3(glm::radians(90.f), glm::radians(-20.f), 0.f);
-
-//     #if defined(__EMSCRIPTEN__)
-//     emscripten_set_main_loop_arg((em_arg_callback_func)mainloop_iteration, &gamedata, -1, -1);
-//     #else
-//     while (gamedata.running) {
-//         mainloop_iteration(&gamedata);
-//     }
-//     #endif
-//     SDL_Quit();
-//     return 0;
-// }
