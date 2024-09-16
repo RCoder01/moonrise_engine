@@ -21,20 +21,20 @@ For dawn backend:
 cmake -DWEBGPU_BACKEND=DAWN -B build_dawn
 cmake --build build_dawn
 ```
-Note: SDL2 is required (SDL_mixer, SDL2) and must be downloaded/installed/packaged separately
+- Note: SDL2 is required (SDL_mixer, SDL2) and must be downloaded/installed/packaged separately
 
 For wgpu backend:
 ```bash
 cmake -DWEBGPU_BACKEND=WGPU -B build_wgpu
 cmake --build build_wgpu
 ```
-Note: SDL2 is required (SDL_mixer, SDL2) and must be downloaded/installed/packaged separately
-Note: you must provide the wgpu shared shared library, the version used is wgpu-native-0.19.4.1
+- Note: SDL2 is required (SDL_mixer, SDL2) and must be downloaded/installed/packaged separately
+- Note: you must provide the wgpu shared shared library, the version used is wgpu-native-0.19.4.1
 
 For emscripten backend:
 ```bash
 emcmake cmake -B build_web
 cmake --build build_web
 ```
-Note: emscripten should be setup first
-Note: webgpu_resources should be in the same directory as the project in order to correctly generate web bundle artifacts
+- Note: emscripten should be setup first
+- Note: webgpu_resources should be in the same directory as the project in order to correctly generate web bundle artifacts
