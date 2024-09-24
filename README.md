@@ -29,7 +29,7 @@ cmake -DWEBGPU_BACKEND=WGPU -B build_wgpu
 cmake --build build_wgpu
 ```
 - Note: SDL2 is required (SDL_mixer, SDL2) and must be downloaded/installed/packaged separately
-- Note: you must provide the wgpu shared shared library, the version used is wgpu-native-0.19.4.1
+- Note: you must provide the wgpu shared library, [wgpu-native-0.19.4.1](https://github.com/gfx-rs/wgpu-native/releases/tag/v0.19.4.1)
 
 For emscripten backend:
 ```bash

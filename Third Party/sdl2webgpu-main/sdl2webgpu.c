@@ -116,21 +116,6 @@ WGPUSurface SDL_GetWGPUSurface(WGPUInstance instance, SDL_Window* window) {
   }
 #elif defined(SDL_VIDEO_DRIVER_WINDOWS)
     {
-        // HWND hwnd = windowWMInfo.info.win.window;
-        // HINSTANCE hinstance = GetModuleHandle(NULL);
-        // return wgpuInstanceCreateSurface(
-        //     instance,
-        //     &(WGPUSurfaceDescriptor){
-        //         .label = NULL,
-        //         .nextInChain = (const WGPUChainedStruct*)&(WGPUSurfaceDescriptorFromWindowsHWND) {
-        //             .chain = (WGPUChainedStruct) {
-        //                 .next = NULL,
-        //                 .sType = WGPUSType_SurfaceDescriptorFromWindowsHWND,
-        //             },
-        //         .hinstance = windowWMInfo.info.win.hinstance,
-        //         .hwnd = windowWMInfo.info.win.window,
-        //     },
-        // });
         WGPUSurfaceDescriptorFromWindowsHWND surfaceDescriptorFromWindowsHWND;
         surfaceDescriptorFromWindowsHWND.chain.next = 0;
         surfaceDescriptorFromWindowsHWND.chain.sType = WGPUSType_SurfaceDescriptorFromWindowsHWND;
