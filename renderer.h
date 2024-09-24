@@ -1324,7 +1324,6 @@ class Renderer {
         glm::mat4x4 projection_matrix = glm::perspective(fov, ratio, near_, far_);
         std::cout << "Projection matrix: " << glm::to_string(projection_matrix) << std::endl;
         std::cout << "View matrix: " << glm::to_string(view_matrix) << std::endl;
-        std::cout << "Model matrix: " << glm::to_string(model_matrix) << std::endl;
 
         return {
             .projection = projection_matrix,
