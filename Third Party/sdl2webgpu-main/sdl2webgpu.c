@@ -32,7 +32,7 @@
 
 #include "sdl2webgpu.h"
 
-#include <webgpu/webgpu.h>
+#include "webgpu/webgpu.h"
 
 #if defined(SDL_VIDEO_DRIVER_COCOA)
 #include <Cocoa/Cocoa.h>
@@ -40,8 +40,8 @@
 #include <QuartzCore/CAMetalLayer.h>
 #endif
 
-#include <SDL.h>
-#include <SDL_syswm.h>
+#include "SDL.h"
+#include "SDL_syswm.h"
 
 WGPUSurface SDL_GetWGPUSurface(WGPUInstance instance, SDL_Window* window) {
     SDL_SysWMinfo windowWMInfo;
